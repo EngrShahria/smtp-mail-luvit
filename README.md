@@ -8,7 +8,8 @@ First, install smtp from Luvit package Manager (**lit**)
 Once you get the module, head to the main file and require it.
 Code Example:
 ```
-local smtp = require("smtp")```
+local smtp = require("smtp")
+```
 
 Create a new SMTP client  
 ```
@@ -32,7 +33,8 @@ Mail:addAuth("UserName", "Password")
 
 Add MAIL and RCPT 
 ```
-Mail:addMail("office@cloudstring.ltd", "shahriafahim@gmail.com")```
+Mail:addMail("email@mail.com", "anotheremail@mail.com")
+```
 
 Once you finish it, add the header data from/to/subject
 ```
@@ -44,10 +46,13 @@ Mail:addHead({
 ```
 Once you finish the header data, add the body part. 
 **NOTE: Body can be HTML/TEXT**
+
 ```
 Mail:addBody("This is a great body!)
 ```
+
 **OR**
+
 ```
 Mail:addBody([[
     <h1>This is a cool HTML Body</h1>
