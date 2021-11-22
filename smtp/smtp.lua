@@ -18,6 +18,12 @@ function mail:initialize(...)
     self.data = {added = false} -- From/To/Sub/Body
 
     self.net = {}
+    local read, write, dsocket, updateDecoder, updateEncoder, close = net.connect({port = self.port, host = self.host, tls = self.tls})
+    self.net = {
+        read = read, 
+        write = write, 
+        close = close
+    }
     return true
 end
 
@@ -72,12 +78,8 @@ function mail:Send(callback)
     if not self.data.body or not self.data.body.added then 
         return callback("No body found") end
     
-    local read, write, dsocket, updateDecoder, updateEncoder, close = net.connect({port = self.port, host = self.host, tls = self.tls})
-    self.net = {
-        read = read, 
-        write = write, 
-        close = close
-    }
+    local write, close = self.net.write, self.net.close
+
     write("EHLO FromSMTPLuvitXinshou") write(push)
     write("HELO "..self.host) write(push)
     
@@ -98,11 +100,10 @@ function mail:Send(callback)
     write(self.data.body.payload) write(push)
     write(".") write(push)
     write("QUIT")write(push)
-    close()
-    self:Destroy()
 end
 
-function mail:Destroy()
+function mail:Destroy() 
+    self.net.close()
     self = nil
 end
 
