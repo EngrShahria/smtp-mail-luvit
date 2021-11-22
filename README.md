@@ -66,6 +66,7 @@ Send the Awesome email!
 Mail:Send(function(text)
     p(text)
 end)
+Mail:Destroy() -- Disconnect and destroy the connected client
 ```
 
 
