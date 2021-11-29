@@ -16,9 +16,12 @@ function mail:initialize(...)
     self.auth = {added = false} -- user/password
     self.mail = {added = false} -- MAIL/RCPT
     self.data = {added = false} -- From/To/Sub/Body
-
+    
     self.net = {}
     local read, write, dsocket, updateDecoder, updateEncoder, close = net.connect({port = self.port, host = self.host, tls = self.tls})
+    if read == nil then 
+	      print("Invalid SMTP server, please check again")
+    return end
     self.net = {
         read = read, 
         write = write, 
@@ -78,13 +81,13 @@ function mail:Send(callback)
     if not self.data.body or not self.data.body.added then 
         return callback("No body found") end
     
-    local write, close = self.net.write, self.net.close
-
+    local write, close, read = self.net.write, self.net.close, self.net.read
     write("EHLO FromSMTPLuvitXinshou") write(push)
+	p(read)
     write("HELO "..self.host) write(push)
-    
+p(read())
     if self.isAuth and self.auth.added then
-        write("AUTH LOGIN") write(push)
+        write("AUTH LOGIN PLAIN") write(push)
         write(self.auth.user) write(push)
         write(self.auth.pass) write(push)
     end
@@ -98,8 +101,10 @@ function mail:Send(callback)
     write("Content-Type: text/html;") write(push)
     write(push)
     write(self.data.body.payload) write(push)
-    write(".") write(push)
-    write("QUIT")write(push)
+    write(".") write(push)p(read())
+    write("QUIT")write(push)p(read())
+
+    callback("Done")
 end
 
 function mail:Destroy() 
@@ -108,4 +113,3 @@ function mail:Destroy()
 end
 
 return mail
-
