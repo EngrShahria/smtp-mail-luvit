@@ -5,7 +5,6 @@ local Object = require("core").Object
 
 local mail = Object:extend()
 
-
 function mail:initialize(...)
     local opt = (...)
     self.host = opt.host or "127.0.0.1"
@@ -83,11 +82,8 @@ function mail:Send(callback)
     
     local write, close, read = self.net.write, self.net.close, self.net.read
     write("EHLO FromSMTPLuvitXinshou") write(push)
-	p(read)
-    write("HELO "..self.host) write(push)
-p(read())
     if self.isAuth and self.auth.added then
-        write("AUTH LOGIN PLAIN") write(push)
+        write("AUTH LOGIN") write(push)
         write(self.auth.user) write(push)
         write(self.auth.pass) write(push)
     end
@@ -101,9 +97,8 @@ p(read())
     write("Content-Type: text/html;") write(push)
     write(push)
     write(self.data.body.payload) write(push)
-    write(".") write(push)p(read())
-    write("QUIT")write(push)p(read())
-
+    write(".") write(push)
+    write("QUIT") write(push)
     callback("Done")
 end
 

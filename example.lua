@@ -22,3 +22,5 @@ Mail:addBody([[
 Mail:Send(function(text)
     p(text)
 end)
+
+Mail:Destroy()
