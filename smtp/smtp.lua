@@ -1,6 +1,6 @@
 local net = require("coro-net")
 local b64 = require("base64").encode
-
+local timer = require('timer')
 local Object = require("core").Object
 
 local mail = Object:extend()
@@ -82,23 +82,30 @@ function mail:Send(callback)
     
     local write, close, read = self.net.write, self.net.close, self.net.read
     write("EHLO FromSMTPLuvitXinshou") write(push)
+    read()
     if self.isAuth and self.auth.added then
         write("AUTH LOGIN") write(push)
+        read()
         write(self.auth.user) write(push)
+        read()
         write(self.auth.pass) write(push)
     end
+    read()
     write("MAIL FROM: <"..self.mail.from..">") write(push)
     write("RCPT TO: <"..self.mail.to..">") write(push)
     write("DATA") write(push)
+    read()
     write("From: "..self.data.head.from) write(push)
     write("To: "..self.data.head.to) write(push)
     write("Subject: "..self.data.head.subj) write(push)
     write("MIME-Version: 1.0") write(push)
     write("Content-Type: text/html;") write(push)
     write(push)
+    read()
     write(self.data.body.payload) write(push)
     write(".") write(push)
-    write("QUIT") write(push)
+    read()
+    write("QUIT")write(push)
     callback("Done")
 end
 
